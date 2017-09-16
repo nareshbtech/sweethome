@@ -1,5 +1,6 @@
 #!/usr/bin/python
-
+#By Naresh Paturi
+#script will maintain two tanks,sump and also a bore.
 from hcsr04sensor import sensor
 import argparse
 import time
@@ -26,6 +27,7 @@ def water_check():
 			if (metric_distance*100)/depth[sen] <= 40:
 				print('low water in Tank {}'.format(sen))
 				on_motor()
+				time.sleep(2400)
 			time.sleep(90)
 			
 def on_motor():
@@ -42,20 +44,27 @@ def on_motor():
 def run_sump():
 	#GPIO_moroto start
 	print('sump motor running')
+	GPIO.setup(sump_pin,GPIO.OUT)
 	time.sleep(10)
+	GPIO.output(sump_pin,GPIO.HIGH)
+
 	if flow():
 		print('no water fromsump')
+		GPIO.output(sump_pin,GPIO.LOW)
 		run_bore()
+		return
 	while overflow():
 		#GPIO_moroto stop
 		click=1
 		print('turning off motor')
 		if click >= 150:
 			print('motor runn more than the limit')
+			GPIO.output(sump_pin,GPIO.LOW)
 			return
 		time.sleep(10)
 		click=+1
-		return
+	GPIO.output(sump_pin,GPIO.LOW)
+	return
 		
 def run_bore():
 	print('HEMA hasnt Authorised me to run bore please run manually')
@@ -93,6 +102,8 @@ def overflow():
 if __name__ == '__main__':
 	u_sensor={1:(26,20), 2:(21,19), 3:(16,13)}
 	depth={1:100.00, 2:120.00, 3:400.00}
+	sump_pin=5
+	bore_pin=12
 	flow_pin = 6
 	samples=5
 	speed=0.1
