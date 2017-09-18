@@ -26,7 +26,7 @@ def water_check():
 	while True:
 		for sen in [1,2]:
 			print('inspecting sensor{}'.format(sen))
-			lev=depth[sen]-water_lev(u_sensor[sen])
+			lev=depth[sen]-water_lev(*u_sensor[sen])
 			if (lev*100)/depth[sen] <= 30:
 				print('low water in Tank {}'.format(sen))
 				on_motor()
@@ -34,7 +34,7 @@ def water_check():
 			time.sleep(90)
 			
 def on_motor():
-	if ((depth[3]-water_lev(u_sensor[3]))*100)/depth[3] >=40:
+	if ((depth[3]-water_lev(*u_sensor[3]))*100)/depth[3] >=40:
 		print('truning on the sump motor')
 		run_sump()
 		retun
@@ -93,7 +93,7 @@ def countPulse(flow_pin):
       count = count+1
 
 def overflow():
-	if ((depth[2]-water_lev(u_sensor[2]))*100)/depth[2] >=90:
+	if ((depth[2]-water_lev(*u_sensor[2]))*100)/depth[2] >=90:
 		print('Tanks are full')
 		return True
 	else:
