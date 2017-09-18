@@ -7,32 +7,34 @@ import time
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
+def water_lev(trig,echo):
+	print('trig pin = gpio {}'.format(trig))
+	print('echo pin = gpio {}'.format(echo))
+	print('speed = {}'.format(speed))
+	print('samples = {}'.format(samples))
+	print('')
+	value = sensor.Measurement(trig, echo)
+	raw_distance = value.raw_distance(sample_size=samples, sample_wait=speed)
+	imperial_distance = value.distance_imperial(raw_distance)
+	metric_distance = value.distance_metric(raw_distance)
+	print('The imperial distance is {} inches.'.format(imperial_distance))
+	print('The metric distance is {} centimetres.'.format(metric_distance))
+	return metric_distance
+	
 def water_check():
 	'''Main function to run the sensor with passed arguments'''
 	while True:
 		for sen in [1,2]:
 			print('inspecting sensor{}'.format(sen))
-			trig,echo=u_sensor[sen]
-			print('trig pin = gpio {}'.format(trig))
-			print('echo pin = gpio {}'.format(echo))
-			print('speed = {}'.format(speed))
-			print('samples = {}'.format(samples))
-			print('')
-			value = sensor.Measurement(trig, echo)
-			raw_distance = value.raw_distance(sample_size=samples, sample_wait=speed)
-			imperial_distance = value.distance_imperial(raw_distance)
-			metric_distance = depth[sen]-value.distance_metric(raw_distance)
-			print('The imperial distance is {} inches.'.format(imperial_distance))
-			print('The metric distance is {} centimetres.'.format(metric_distance))
-			if (metric_distance*100)/depth[sen] <= 40:
+			lev=depth[sen]-water_lev(u_sensor[sen])
+			if (lev*100)/depth[sen] <= 30:
 				print('low water in Tank {}'.format(sen))
 				on_motor()
 				time.sleep(2400)
 			time.sleep(90)
 			
 def on_motor():
-	sump=sensor.Measurement(u_sensor[3]).raw_distance(sample_size=samples, sample_wait=speed)
-	if ((depth[3]-sump.distance_metric(sump))*100)/depth[3] >=40:
+	if ((depth[3]-water_lev(u_sensor[3]))*100)/depth[3] >=40:
 		print('truning on the sump motor')
 		run_sump()
 		retun
@@ -91,8 +93,7 @@ def countPulse(flow_pin):
       count = count+1
 
 def overflow():
-	tank2=sensor.Measurement(u_sensor[2]).raw_distance(sample_size=samples, sample_wait=speed)	
-	if ((depth[2]-sump.distance_metric(tank2))*100)/depth[2] >=90:
+	if ((depth[2]-water_lev(u_sensor[2]))*100)/depth[2] >=90:
 		print('Tanks are full')
 		return True
 	else:
