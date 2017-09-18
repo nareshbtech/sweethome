@@ -112,5 +112,9 @@ if __name__ == '__main__':
 	count=0
 	try:
 		water_check()
+	except:
+		print ('error')
+		GPIO.cleanup() 
 	finally:
+		print('runnig finally')
 		GPIO.cleanup()  
