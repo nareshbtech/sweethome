@@ -34,6 +34,7 @@ def water_check():
 			time.sleep(90)
 			
 def on_motor():
+	print('inspecting sump')
 	if ((depth[3]-water_lev(*u_sensor[3]))*100)/depth[3] >=40:
 		print('truning on the sump motor')
 		run_sump()
@@ -109,4 +110,7 @@ if __name__ == '__main__':
 	samples=5
 	speed=0.1
 	count=0
-	water_check()
+	try:
+		water_check()
+	finally:
+		GPIO.cleanup()  
