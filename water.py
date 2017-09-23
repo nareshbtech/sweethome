@@ -117,11 +117,11 @@ if __name__ == '__main__':
 	logger = logging.getLogger('sweethome')
 	logger.setLevel(logging.DEBUG)
 	logger.addHandler(SQLiteHandler('debugLog.sqlite'))
-	u_sensor={1:(26,20), 2:(21,19), 3:(16,13)}
+	u_sensor={1:(5,6), 2:(13,19), 3:(20,21)}
 	depth={1:100.00, 2:120.00, 3:400.00}
-	sump_pin=5
+	sump_pin=16
 	bore_pin=12
-	flow_pin = 6
+	flow_pin = 26
 	samples=5
 	speed=0.1
 	count=0
